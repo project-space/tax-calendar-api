@@ -1,1 +1,4 @@
-./packages
+packages/
+paket-files/
+src/obj
+src/bin
