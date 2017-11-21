@@ -1,6 +1,0 @@
-Giraffe
-Microsoft.AspNetCore.Hosting
-Microsoft.AspNetCore.Server.Kestrel
-Microsoft.Extensions.Logging
-Microsoft.Extensions.Logging.Console
-Microsoft.Extensions.Logging.Debug

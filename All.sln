@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ED583998-2F05-47AB-AA1D-82620C65D881}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{114A1391-0EA3-49A6-91E7-4D073FA69C89}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Design", "src\Design\Design.fsproj", "{22F18BE9-6A5F-40AB-BC7F-8F57FD4502D7}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DataAccess", "src\DataAccess\DataAccess.fsproj", "{50D5D003-C237-401E-BBB4-D04A0DB41434}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22F18BE9-6A5F-40AB-BC7F-8F57FD4502D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22F18BE9-6A5F-40AB-BC7F-8F57FD4502D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22F18BE9-6A5F-40AB-BC7F-8F57FD4502D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22F18BE9-6A5F-40AB-BC7F-8F57FD4502D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D5D003-C237-401E-BBB4-D04A0DB41434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D5D003-C237-401E-BBB4-D04A0DB41434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D5D003-C237-401E-BBB4-D04A0DB41434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D5D003-C237-401E-BBB4-D04A0DB41434}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{22F18BE9-6A5F-40AB-BC7F-8F57FD4502D7} = {ED583998-2F05-47AB-AA1D-82620C65D881}
+		{50D5D003-C237-401E-BBB4-D04A0DB41434} = {ED583998-2F05-47AB-AA1D-82620C65D881}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E1B55D0-F670-442C-8926-8EA46DF68A96}
+	EndGlobalSection
+EndGlobal
