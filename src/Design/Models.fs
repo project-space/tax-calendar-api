@@ -23,7 +23,7 @@ module Models =
           Tax: TaxType
           Type: TaxPeriodType
           Year: uint16
-          Querter: uint8
+          Quarter: uint8
           Month: uint8 }
 
     (* Время действия какого либо налога, начиная с даты принятия и заканчивая датой отмены \ упразднения *)
