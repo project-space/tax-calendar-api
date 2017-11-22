@@ -6,30 +6,29 @@ module Models =
     // Tax model description
     //________________________________________________________
 
+    (* Уникальные идентификаторы налогов, используются в базе данных - значения не менять *)
     type TaxType =
-        | USN 
-        | ENVD
+        | USN = 0
+        | ENVD = 1
 
+    (* Возможные типы налогового периода *)
     type TaxPeriodType =
         | Annual        = 0
-        | FirstQuarter  = 1
-        | SecondQuarter = 2
-        | ThirdQuarter  = 3
-        | FourthQuarter = 4
+        | Quarterly     = 1
+        | Monthly       = 2
 
-    type Tax =
-        { Id: TaxType
-          Name: string }
-
+    (* Период, за который оплачивается налог *)
     type TaxPeriod =
-        { Id: TaxType
+        { Id: uint64
+          Tax: TaxType
           Type: TaxPeriodType
           Year: uint16
-          Querter: uint8 }
-          
+          Querter: uint8
+          Month: uint8 }
 
+    (* Время действия какого либо налога, начиная с даты принятия и заканчивая датой отмены \ упразднения *)
     type TaxValidityPeriod =
-        { Id: TaxType
+        { Tax: TaxType
           IntroductionYear: uint16
           CancellationYear: uint16 }
 
@@ -37,12 +36,19 @@ module Models =
     // Event model description
     //________________________________________________________
 
+    (* Сущности являющиеся причиной события *)
+    type EventEntityType =
+        | Tax
+
+    (* Возможные состояния события *)
     type EventState =
-        | Created   = 0
+        | Default   = 0
         | Removed   = 1
         | Completed = 2
 
+    (* Конкретное событие *)
     type Event =
         { Id: uint64
-          TaxId: uint64
-          State: EventState }
+          State: EventState
+          EntityId: uint64
+          EntityType: EventEntityType }
