@@ -17,7 +17,7 @@ module TaxPeriodCreator =
             List.map (fun quarter -> 
                 { templatePeriod with Year = year; Quarter = quarter }
             ) [uint8(1) .. uint8(4)]
-        ) [validityPeriod.IntroductionYear .. validityPeriod.CancellationYear]
+        ) [validityPeriod.IntroductionYear .. validityPeriod.CancellationYear - uint16(1)]
 
     let public Create (validityPeriods: TaxValidityPeriod list) =
         let toTaxPeriods validityPeriod =
