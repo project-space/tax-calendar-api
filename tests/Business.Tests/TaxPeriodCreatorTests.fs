@@ -3,7 +3,6 @@ module TaxPeriodCreatorTests
 open Expecto
 open Business
 open Design.Models
-open Design.Models
 
 [<Tests>]
 let ``tests for Create`` =
