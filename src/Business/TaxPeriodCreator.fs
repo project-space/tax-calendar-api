@@ -1,28 +1,38 @@
 namespace Business
 
-
 module TaxPeriodCreator =
     open Design.Models
 
-    let private ``Create ENVD periods`` (validityPeriod: TaxValidityPeriod) =
-        let templatePeriod = 
-            { Id = uint64(0)
-              Tax = TaxType.ENVD
-              Type = TaxPeriodType.Quarterly
-              Year = uint16(0)
-              Quarter = uint8(0)
-              Month = uint8(0) }
+    //-------------------------------------------------------
+    // Helpers
+    //_______________________________________________________
 
-        List.collect (fun year -> 
-            List.map (fun quarter -> 
-                { templatePeriod with Year = year; Quarter = quarter }
-            ) [uint8(1) .. uint8(4)]
-        ) [validityPeriod.IntroductionYear .. validityPeriod.CancellationYear - uint16(1)]
+    let private createQuarterlyPeriods year taxType =
+        [uint8(1) .. uint8(4)]
+            |> List.map (fun quarter ->
+                { Id = uint64(0)
+                  Tax = taxType
+                  Type = TaxPeriodType.Quarterly
+                  Year = year
+                  Quarter = quarter
+                  Month = uint8(0) })
+
+    //-------------------------------------------------------
+    // Creators for every tax type
+    //_______________________________________________________
+
+    let private createEnvdPeriods (validityPeriod: TaxValidityPeriod) =
+        [validityPeriod.IntroductionYear .. validityPeriod.CancellationYear - uint16(1)]
+            |> List.collect (fun year -> createQuarterlyPeriods year TaxType.ENVD)
+
+    //-------------------------------------------------------
+    // Composition
+    //_______________________________________________________
 
     let public Create (validityPeriods: TaxValidityPeriod list) =
         let toTaxPeriods validityPeriod =
             match validityPeriod with
-                | period when period.Tax = TaxType.ENVD -> ``Create ENVD periods`` period 
+                | period when period.Tax = TaxType.ENVD -> createEnvdPeriods period 
                 | period ->
                     failwith (sprintf "Неподдерживаемый налог [%s]" (period.Tax.ToString()))
 
