@@ -6,5 +6,6 @@
     <Compile Include="Primitives.fs" />
     <Compile Include="Models/Calendar.fs" />
     <Compile Include="Models/Tax.fs" />
+    <Compile Include="Models/Settings.fs" />
   </ItemGroup>
 </Project>
