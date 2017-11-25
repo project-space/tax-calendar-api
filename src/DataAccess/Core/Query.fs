@@ -2,6 +2,7 @@ namespace DataAccess.Core
 
 open Dapper
 open Connection
+open System.Collections.Generic
 
 module Query =
     let inline (=>) key value = key, box value
@@ -10,8 +11,8 @@ module Query =
         use connection = getConnection()
 
         return! 
-            connection.QueryAsync(query, param)
-            |> Async.AwaitTask
+            connection.QueryAsync<'T>(query, param)
+            |> Async.AwaitTask<IEnumerable<'T>>
     }
 
     let public QuerySingleAsync<'T> (query:string) (param: obj) = async {
@@ -19,7 +20,7 @@ module Query =
 
         return! 
             connection.QuerySingleOrDefaultAsync(query, param)
-            |> Async.AwaitTask
+            |> Async.AwaitTask<'T>
     }
 
     let public ExecuteAsync (query: string) (param: obj) = async {
