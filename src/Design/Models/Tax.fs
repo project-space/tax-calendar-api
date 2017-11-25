@@ -1,15 +1,17 @@
-﻿namespace Design
+namespace Design.Models
 
-module Models =
+[<AutoOpen>]
+module Tax =
     
-    //--------------------------------------------------------
-    // Tax model description
-    //________________________________________________________
-
     (* Уникальные идентификаторы налогов, используются в базе данных - значения не менять *)
     type TaxType =
         | USN = 0
         | ENVD = 1
+
+    type TaxDescription =
+        { Tax: TaxType
+          Name: string
+          Fines: string }
 
     (* Возможные типы налогового периода *)
     type TaxPeriodType =
@@ -31,24 +33,3 @@ module Models =
         { Tax: TaxType
           IntroductionYear: uint16
           CancellationYear: uint16 }
-
-    //--------------------------------------------------------
-    // Event model description
-    //________________________________________________________
-
-    (* Сущности являющиеся причиной события *)
-    type EventEntityType =
-        | Tax
-
-    (* Возможные состояния события *)
-    type EventState =
-        | Default   = 0
-        | Removed   = 1
-        | Completed = 2
-
-    (* Конкретное событие *)
-    type Event =
-        { Id: uint64
-          State: EventState
-          EntityId: uint64
-          EntityType: EventEntityType }
