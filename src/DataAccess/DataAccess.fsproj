@@ -3,11 +3,18 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Design\Design.fsproj">
+      <Name>Design.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Core/Connection.fs" />
     <Compile Include="Core/Query.fs" />
+    <Compile Include="Queries.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
   </ItemGroup>
 </Project>
