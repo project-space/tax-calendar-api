@@ -8,11 +8,11 @@ module Queries =
 
     module Settings =
 
-        let public Get (firmId: uint64) (year: uint16) = async {
+        let public Get (firmId: int64) (year: int16) = async {
             let script = @"
                 select
-                    Values 
-                form 
+                    [Values] 
+                from
                     YearSetting 
                 where 
                     FirmId = @FirmId and 
@@ -36,7 +36,7 @@ module Queries =
                 if exists (select 1 from YearSetting where FirmId = @FirmId and Year = @Year)
                 begin
                     update YearSetting set
-                        Values = @Values
+                        [Values] = @Values
                 end
                 else begin
                     insert into YearSetting
