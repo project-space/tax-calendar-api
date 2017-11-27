@@ -1,8 +1,20 @@
-﻿// Learn more about F# at http://fsharp.org
+﻿module Program
 
 open System
 
+open Microsoft.AspNetCore
+open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.Builder
+
+open Api.Configuration
+
 [<EntryPoint>]
-let main argv =
-    printfn "Hello World from F#!"
-    0 // return an integer exit code
+let main _ =
+    WebHost
+        .CreateDefaultBuilder()
+        .Configure(Action<IApplicationBuilder> configureApp)
+        .ConfigureLogging(configureLogging)
+        .Build()
+        .Run()
+
+    0
