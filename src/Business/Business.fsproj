@@ -8,6 +8,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TaxPeriodCreator.fs" />
+    <Compile Include="TaxPeriod.fs" />
   </ItemGroup>
 </Project>
