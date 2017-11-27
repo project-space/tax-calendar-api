@@ -12,6 +12,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers/V1/FirmsController.fs" />
+    <Compile Include="Controllers/V1/TaxesController.fs" />
     <Compile Include="Handlers.fs" />
     <Compile Include="Routes.fs" />
     <Compile Include="Configuration.fs" />

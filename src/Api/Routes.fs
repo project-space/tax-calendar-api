@@ -2,19 +2,25 @@ namespace Api
 
 module Routes =
     open Giraffe.HttpHandlers
-    open DataAccess.Queries
+    open Controllers.Taxes
+
+    let private ``Firm API V1`` =
+        subRouteCi "/Firms" 
+            (choose [
+                GET >=> route "/" >=> text "FIRMS API V1"
+            ])
+
+    let private ``Taxes API V1`` =
+        subRouteCi "/Taxes"
+            (choose [
+                GET >=> route "/" >=> text "TAXES API V1"
+                
+                POST >=> routeCif "/%s/ValidityPeriod" (PostValidityPeriod >> json)
+            ])
 
     let Default: HttpHandler = 
-        choose [
-            GET >=> 
-                choose [
-                    route "/" >=> text "Hello, this is tax calendar API"
-                    routef "/settings/%i/%i" (fun (year, firmId) ->
-                            let (f, y) = (int64(firmId), int16(year)) 
-                            let r = (Settings.Get f y) |> Async.RunSynchronously
-                            json r 
-                        )
-                ]
-
-            setStatusCode 404 >=> text "Not found"             
-        ]
+        subRouteCi "/api/v1" 
+            (choose [
+                ``Firm API V1``
+                ``Taxes API V1``
+            ])
