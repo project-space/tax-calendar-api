@@ -1,18 +1,23 @@
 namespace Design.Models
 
 module Settings =
-    type TaxationSystem =
-        | OSNO
-        | USN
-        | ENVD
-        | PSN
-        | ESHN
+    open System
 
-    (* Данные о пользователе (за конкретный год) используемые для генерации событий *)
+    (* Системы налогообложения, используются в базе данных, значения не изменять *)
+    [<FlagsAttribute>]
+    type TaxationSystem =
+        | OSNO = 1
+        | USN  = 2
+        | ENVD = 3
+        | PSN  = 4
+        | ESHN = 5
+
+    (* Данные используемые для генерации событий *)
     type YearSettingsValues = 
         { TaxationSystem: TaxationSystem }
 
+    (* Данные по фирме за конкретный год*)
     type YearSettings = 
-        { FirmId: uint64
-          Year: uint16 
-          Values: YearSettingsValues }
+        { FirmId : int64
+          Year   : int16 
+          Values : YearSettingsValues }
