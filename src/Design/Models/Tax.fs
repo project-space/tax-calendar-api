@@ -1,6 +1,5 @@
 namespace Design.Models
 
-[<AutoOpen>]
 module Tax =
     open System
 
@@ -37,21 +36,21 @@ module Tax =
     (* Возможные типы налогового периода *)
     [<FlagsAttribute>]
     type TaxPeriodType =
-        | Annual        = 0
-        | Quarterly     = 1
-        | Monthly       = 2
+        | Annual    = 0
+        | Quarterly = 1
+        | Monthly   = 2
 
     (* Период, за который оплачивается налог *)
     type TaxPeriod =
-        { Id: uint64
-          Tax: TaxType
-          Type: TaxPeriodType
-          Year: uint16
-          Quarter: uint8
-          Month: uint8 }
+        { Id      : int64
+          Tax     : TaxType
+          Type    : TaxPeriodType
+          Year    : int16
+          Quarter : byte
+          Month   : byte }
 
     (* Время действия какого либо налога, начиная с даты принятия и заканчивая датой отмены \ упразднения *)
     type TaxValidityPeriod =
-        { Tax: TaxType
-          IntroductionYear: uint16
-          CancellationYear: uint16 }
+        { Tax              : TaxType
+          IntroductionYear : int16
+          CancellationYear : int16 }
