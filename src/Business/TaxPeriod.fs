@@ -23,9 +23,9 @@ module TaxPeriod =
     //-------------------------------------------------------
     // Composition
     //_______________________________________________________
-    let public Create (validityPeriods: TaxValidityPeriod list) =
-        let toTaxPeriods validityPeriod =
-            match validityPeriod.Tax with
+    let public Create (taxes: Tax list) =
+        let toTaxPeriods tax =
+            match tax.Id with
                 | TaxType.VAT -> failwith "НДС не поддерживается на данный момент"
                 | TaxType.Excises -> failwith "Налог на акцизы не поддерживается на данный момент"
                 | TaxType.PersonalIncome -> failwith "Налог на доходы физ. лиц не поддерживается на данный момент"
@@ -42,4 +42,4 @@ module TaxPeriod =
                 | TaxType.InsurancePremiums -> failwith "Страховые взносы не поддерживаются на данный момент"
                 | unsupportedTax -> failwith (sprintf "Неподдерживаемый налог [%s]" (unsupportedTax.ToString()))
 
-        List.collect toTaxPeriods validityPeriods
+        List.collect toTaxPeriods taxes

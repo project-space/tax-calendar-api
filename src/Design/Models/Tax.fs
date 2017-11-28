@@ -28,10 +28,12 @@ module Tax =
         (* Страховые взносы в Российской Федерации *)
         | InsurancePremiums = 14 (* Страховые взносы *)
 
-    type TaxDescription =
-        { Tax: TaxType
-          Name: string
-          Fines: string }
+    type Tax =
+        { Id               : TaxType
+          Name             : string
+          IntroductionYear : int16
+          CancellationYear : int16
+          Fines            : string }
 
     (* Возможные типы налогового периода *)
     [<FlagsAttribute>]
@@ -43,14 +45,8 @@ module Tax =
     (* Период, за который оплачивается налог *)
     type TaxPeriod =
         { Id      : int64
-          Tax     : TaxType
+          TaxId   : TaxType
           Type    : TaxPeriodType
           Year    : int16
           Quarter : byte
           Month   : byte }
-
-    (* Время действия какого либо налога, начиная с даты принятия и заканчивая датой отмены \ упразднения *)
-    type TaxValidityPeriod =
-        { Tax              : TaxType
-          IntroductionYear : int16
-          CancellationYear : int16 }

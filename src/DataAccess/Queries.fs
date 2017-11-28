@@ -6,6 +6,10 @@ open Newtonsoft.Json
 
 module Queries =
 
+    module Taxes = 
+        ()
+
+
     module Settings =
 
         let public Get (firmId: int64) (year: int16) = async {

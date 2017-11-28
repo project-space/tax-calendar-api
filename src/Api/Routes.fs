@@ -7,15 +7,15 @@ module Routes =
     let private ``Firm API V1`` =
         subRouteCi "/Firms" 
             (choose [
-                GET >=> route "/" >=> text "FIRMS API V1"
             ])
 
     let private ``Taxes API V1`` =
         subRouteCi "/Taxes"
             (choose [
-                GET >=> route "/" >=> text "TAXES API V1"
-                
-                POST >=> routeCif "/%s/ValidityPeriod" (PostValidityPeriod >> json)
+                GET  >=> route  "/"   >=> GetTaxes
+                POST >=> route  "/"   >=> PostTax
+
+                GET  >=> routef "/%i"     GetTax
             ])
 
     let Default: HttpHandler = 
