@@ -12,10 +12,10 @@ module Routes =
     let private ``Taxes API V1`` =
         subRouteCi "/Taxes"
             (choose [
-                GET  >=> route  "/"   >=> GetTaxes
-                POST >=> route  "/"   >=> PostTax
+                GET  >=> route  "/"   >=> Get
+                POST >=> route  "/"   >=> PostSingle
 
-                GET  >=> routef "/%i"     GetTax
+                GET  >=> routef "/%i"     GetSingle
             ])
 
     let Default: HttpHandler = 

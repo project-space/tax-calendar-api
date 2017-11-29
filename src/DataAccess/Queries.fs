@@ -2,16 +2,28 @@ namespace DataAccess
 
 open Core.Query
 open Design.Models.Settings
+open Design.Models.Tax
 open Newtonsoft.Json
+open Design.Models.Tax
 
 module Queries =
 
     module Taxes = 
-        ()
+        let public Get () = async {
+            let script = @"select * from Tax"
+
+            return! QueryAsync<Tax> script null
+        }
+
+        let public GetSingle (taxId: TaxType) = async {
+            let script = @"select * from Tax where Id = @Id"
+            let param = dict [ "Id" => taxId ]
+
+            return! QuerySingleAsync<Tax> script param
+        }
 
 
     module Settings =
-
         let public Get (firmId: int64) (year: int16) = async {
             let script = @"
                 select
