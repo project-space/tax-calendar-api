@@ -31,9 +31,9 @@ module Tax =
     type Tax =
         { Id               : TaxType
           Name             : string
+          Fines            : string
           IntroductionYear : int16
-          CancellationYear : int16
-          Fines            : string }
+          CancellationYear : int16 }
 
     (* Возможные типы налогового периода *)
     [<FlagsAttribute>]
