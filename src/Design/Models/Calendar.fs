@@ -1,6 +1,5 @@
 ﻿namespace Design.Models
 
-[<AutoOpen>]
 module Calendar =
     open System        
     

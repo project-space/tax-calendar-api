@@ -49,4 +49,6 @@ module Tax =
           Type    : TaxPeriodType
           Year    : int16
           Quarter : byte
-          Month   : byte }
+          Month   : byte
+          Start   : DateTime
+          End     : DateTime }

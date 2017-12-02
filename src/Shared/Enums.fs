@@ -13,5 +13,5 @@ module Enums =
 
     [<Flags>]
     type BusinessFormType = 
-        | IP
-        | OOO    
+        | IP  = 1
+        | OOO = 2

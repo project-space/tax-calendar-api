@@ -1,16 +1,21 @@
 namespace Api.Controllers
 
 module Firms =
+    open DTO.Settings
     open Giraffe.HttpHandlers
+    open Giraffe.HttpContextExtensions
     open Giraffe.Tasks
     open Microsoft.AspNetCore.Http
 
-    let public ChangeSettings (firmId: int64) =
+    let public ChangeSettings (firmId: int) =
         fun (next: HttpFunc) (context: HttpContext) -> task {
-            return! next context
+            let! request = context.BindJson<ChangeRequest>()
+            let! result  = Business.Settings.ChangeSettings (int64 firmId) request
+
+            return! json result next context
         }
 
-    let public GetAllEvents (firmId: int64) =
+    let public GetAllEvents (firmId: int) =
         fun (next: HttpFunc) (context: HttpContext) -> task {
             return! next context
         }

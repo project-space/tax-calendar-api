@@ -2,31 +2,20 @@ namespace Business
 
 module TaxPeriod =
     open Design.Models.Tax
+    open System
 
     //-------------------------------------------------------
-    // Helpers
-    //_______________________________________________________
-    let private createQuarterlyPeriods year taxType =
-        [1uy .. 4uy]
-            |> List.map (fun quarter ->
-                { Id = 0L
-                  Tax = taxType
-                  Type = TaxPeriodType.Quarterly
-                  Year = year
-                  Quarter = quarter
-                  Month = 0uy })
-
-    //-------------------------------------------------------
-    // Creators for every tax type
-    //_______________________________________________________
+    // VAT
+    let private ``create VAT periods`` (tax: Tax) =
+        list<Tax>.Empty
 
     //-------------------------------------------------------
     // Composition
     //_______________________________________________________
     let public Create (taxes: Tax list) =
-        let toTaxPeriods tax =
+        let toTaxPeriods (tax: Tax) =
             match tax.Id with
-                | TaxType.VAT -> failwith "НДС не поддерживается на данный момент"
+                | TaxType.VAT -> ``create VAT periods`` tax
                 | TaxType.Excises -> failwith "Налог на акцизы не поддерживается на данный момент"
                 | TaxType.PersonalIncome -> failwith "Налог на доходы физ. лиц не поддерживается на данный момент"
                 | TaxType.CorporateIncome -> failwith "Нало на доходы организации не поддерживается на данный момент"

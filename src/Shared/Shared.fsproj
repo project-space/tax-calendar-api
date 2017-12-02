@@ -4,5 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Enums.fs" />
+    <Compile Include="Primitives.fs" />
   </ItemGroup>
 </Project>

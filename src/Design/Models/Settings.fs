@@ -1,23 +1,21 @@
 namespace Design.Models
 
-module Settings =
-    open System
+open Shared.Enums
+open Shared.Primitives
+open System
 
-    (* Системы налогообложения, используются в базе данных, значения не изменять *)
-    [<FlagsAttribute>]
-    type TaxationSystem =
-        | OSNO = 1
-        | USN  = 2
-        | ENVD = 3
-        | PSN  = 4
-        | ESHN = 5
+(* Данные используемые для генерации событий *)
 
-    (* Данные используемые для генерации событий *)
-    type YearSettingsValues = 
-        { TaxationSystem: TaxationSystem }
+type SettingValues = 
+    { RegistrationDate: DateTime
+      BusinessFormType: BusinessFormType
+      TaxationSystemTypes: seq<TaxationSystemType * Year> }
+    with
+      static member Default =
+        { RegistrationDate = DateTime.MinValue 
+          BusinessFormType = BusinessFormType.IP
+          TaxationSystemTypes = Seq.empty }    
 
-    (* Данные по фирме за конкретный год*)
-    type YearSettings = 
-        { FirmId : int64
-          Year   : int16 
-          Values : YearSettingsValues }
+type Settings = 
+    { FirmId : int64
+      Values : SettingValues }

@@ -1,71 +1,33 @@
 namespace DataAccess
 
 open Core.Query
-open Design.Models.Settings
-open Design.Models.Tax
+open Design.Models
 open Newtonsoft.Json
-open Design.Models.Tax
 
 module Queries =
-
-    module Taxes = 
-        let public Get () = async {
-            let script = @"select * from Tax"
-
-            return! QueryAsync<Tax> script null
-        }
-
-        let public GetSingle (taxId: TaxType) = async {
-            let script = @"select * from Tax where Id = @Id"
-            let param = dict [ "Id" => taxId ]
-
-            return! QuerySingleAsync<Tax> script param
-        }
-
-
     module Settings =
-        let public Get (firmId: int64) (year: int16) = async {
-            let script = @"
-                select
-                    [Values] 
-                from
-                    YearSetting 
-                where 
-                    FirmId = @FirmId and 
-                    Year = @Year"
-
-            let param =
-                dict [
-                    "FirmId" => firmId
-                    "Year" => year
-                ]
+        let public Get (firmId: int64) = async {
+            let script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Get.sql"
+            let param = dict [ "FirmId" => firmId ]
 
             let! serializedValues = QuerySingleAsync script param
-            let desirealizedValue = JsonConvert.DeserializeObject<YearSettingsValues>(serializedValues)
+            let desirealizedValue = 
+                if isNull serializedValues 
+                    then SettingValues.Default
+                    else JsonConvert.DeserializeObject<SettingValues>(serializedValues)
 
-            return { FirmId = firmId; Year = year; Values = desirealizedValue }
+            return
+                { FirmId = firmId 
+                  Values = desirealizedValue }
         }
-
-
-        let public Save (settings: YearSettings) = async {
-            let script = @"
-                if exists (select 1 from YearSetting where FirmId = @FirmId and Year = @Year)
-                begin
-                    update YearSetting set
-                        [Values] = @Values
-                end
-                else begin
-                    insert into YearSetting
-                        values (@FirmId, @Year, @Values)
-                end"
-
+        
+        let public Save (settings: Settings) = 
             let serializedValues = JsonConvert.SerializeObject(settings.Values)
+            let script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Save.sql"
             let param = 
                 dict [
                     "FirmId" => settings.FirmId
-                    "Year" => settings.Year
                     "Values" => serializedValues
                 ]
 
-            return! ExecuteAsync script param
-        }
+            ExecuteAsync script param

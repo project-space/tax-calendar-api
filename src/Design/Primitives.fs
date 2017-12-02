@@ -1,4 +1,1 @@
-﻿namespace Design
-
-module Primitives =
-    ()
+﻿namespace Design.Primitives

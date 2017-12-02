@@ -8,15 +8,13 @@ module Routes =
     let private ``Firm Api version 1`` =
         subRouteCi "/Firms" 
             (choose [
-                POST >=> routef "/%i/Settings/Change" ChangeSettings
-                GET  >=> routef "/%i/Events/"         GetAllEvents
+                POST >=> routef "/%i/Settings/Change" ChangeSettings (* Изменяет данные фирмы, при этом добавляются или удаляются налоговые события *)
+                GET  >=> routef "/%i/Events/"         GetAllEvents   (* Возвращает список налоговых событий для фирмы *)
             ])
     
     let private ``Taxes Api version 1`` =
         subRouteCi "/Taxes"
-            (choose [                
-                POST >=> route  "/"   >=> PostSingle
-                GET  >=> routef "/%i"     GetSingle
+            (choose [
             ])
 
     let Default: HttpHandler = 
