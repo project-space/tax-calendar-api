@@ -2,10 +2,11 @@ namespace Design.Models
 
 module Tax =
     open System
+    open Shared.Enums
 
     (* Уникальные идентификаторы налогов, используются в базе данных - значения не менять *)
     [<FlagsAttribute>]
-    type TaxType =
+    type Id =
         (* Федеральные налоги *)
         | VAT               = 1 (* Налог на добавленную стоимость *)
         | Excises           = 2 (* Акцизы *)
@@ -28,8 +29,8 @@ module Tax =
         (* Страховые взносы в Российской Федерации *)
         | InsurancePremiums = 14 (* Страховые взносы *)
 
-    type Tax =
-        { Id               : TaxType
+    type T =
+        { Id               : Id
           Name             : string
           Fines            : string
           IntroductionYear : int16
@@ -37,18 +38,41 @@ module Tax =
 
     (* Возможные типы налогового периода *)
     [<FlagsAttribute>]
-    type TaxPeriodType =
+    type PeriodType =
         | Annual    = 0
         | Quarterly = 1
         | Monthly   = 2
 
     (* Период, за который оплачивается налог *)
-    type TaxPeriod =
+    type Period =
         { Id      : int64
-          TaxId   : TaxType
-          Type    : TaxPeriodType
+          TaxId   : Id
+          Type    : PeriodType
           Year    : int16
           Quarter : byte
           Month   : byte
           Start   : DateTime
           End     : DateTime }
+
+    module Restrictions =
+
+        (* Тэги, указывающие на признаки, при наличии которых (хотя бы одного) уплачивается налог *)      
+        type Tag =
+            | BusinessForm of BusinessFormType
+            | TaxationSystem of TaxationSystemType
+            | HasInvoiceIncludingVAT
+
+        let Values = 
+            dict [
+                (Id.VAT, [
+                    TaxationSystem(TaxationSystemType.OSNO)
+                    HasInvoiceIncludingVAT
+                ])
+
+                (Id.PersonalProperty, [
+                    BusinessForm(BusinessFormType.IP)
+                ])
+
+                (Id.PersonalIncome, [
+                    BusinessForm(BusinessFormType.IP)])            
+            ]

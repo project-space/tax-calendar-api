@@ -1,9 +1,20 @@
 namespace Business
 
-module Calendar =
-    open Design.Models
-    open Design.Models.Calendar
-    open Design.Models.Tax
+open Design.Models
+open Design.Models.Calendar
+open DTO.Settings
 
-    let public OnSettingsChanged settings =
+module Calendar =
+
+    let createEvents setting =
         ()
+
+    let private updateEvents setting change = 
+        let taxPeriods = Seq.empty<Tax.Period>
+        let existingEvents = Seq.empty<Event.T>
+
+        let events = createEvents setting
+        ()
+
+    let public OnSettingsChanged (settings: Setting.T) (change: ChangeRequest) =
+        updateEvents settings change

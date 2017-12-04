@@ -2,10 +2,10 @@ namespace Business
 
 module Settings =
     open DataAccess.Queries
-    open Design.Models
+    open Design.Models.Setting
     open DTO.Settings
     open Shared.Primitives
-
+    
     let private applyChanges values change =
         match change with
         | Register (businessForm, taxationSystem) -> 
@@ -30,7 +30,7 @@ module Settings =
         let  changedSettings = { settings with Values = applyChanges settings.Values change }
         let! _               = Settings.Save changedSettings
 
-        Calendar.OnSettingsChanged changedSettings
+        Calendar.OnSettingsChanged changedSettings change
         
         ()
     }

@@ -12,10 +12,8 @@
     <Compile Include="Core/Query.fs" />
     <Compile Include="Core/ResourceManager.fs" />
     <Compile Include="Queries.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Scripts/Settings_Save.sql"/>
-    <EmbeddedResource Include="Scripts/Settings_Get.sql"/>
+    <EmbeddedResource Include="Scripts/Settings_Save.sql" />
+    <EmbeddedResource Include="Scripts/Settings_Get.sql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.2" />

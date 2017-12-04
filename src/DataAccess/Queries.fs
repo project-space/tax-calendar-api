@@ -13,20 +13,20 @@ module Queries =
             let! serializedValues = QuerySingleAsync script param
             let desirealizedValue = 
                 if isNull serializedValues 
-                    then SettingValues.Default
-                    else JsonConvert.DeserializeObject<SettingValues>(serializedValues)
+                    then Setting.Values.Default
+                    else JsonConvert.DeserializeObject<Setting.Values>(serializedValues)
 
             return
-                { FirmId = firmId 
-                  Values = desirealizedValue }
+                { Setting.T.FirmId = firmId
+                  Setting.T.Values = desirealizedValue }
         }
         
-        let public Save (settings: Settings) = 
-            let serializedValues = JsonConvert.SerializeObject(settings.Values)
+        let public Save (setting: Setting.T) = 
+            let serializedValues = JsonConvert.SerializeObject(setting.Values)
             let script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Save.sql"
             let param = 
                 dict [
-                    "FirmId" => settings.FirmId
+                    "FirmId" => setting.FirmId
                     "Values" => serializedValues
                 ]
 
