@@ -54,7 +54,7 @@ module Tax =
           Start   : DateTime
           End     : DateTime }
 
-    module Restrictions =
+    module Restriction =
 
         (* Тэги, указывающие на признаки, при наличии которых (хотя бы одного) уплачивается налог *)      
         type Tag =
@@ -62,8 +62,8 @@ module Tax =
             | TaxationSystem of TaxationSystemType
             | HasInvoiceIncludingVAT
 
-        let Values = 
-            dict [
+        let public Values = 
+            [
                 (Id.VAT, [
                     TaxationSystem(TaxationSystemType.OSNO)
                     HasInvoiceIncludingVAT
@@ -75,4 +75,4 @@ module Tax =
 
                 (Id.PersonalIncome, [
                     BusinessForm(BusinessFormType.IP)])            
-            ]
+            ] |> Map.ofList
