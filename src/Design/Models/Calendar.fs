@@ -8,7 +8,7 @@ module Calendar =
         (* Сущности являющиеся причиной события *)
         [<FlagsAttribute>]
         type EntityType =
-            | Tax = 1
+            | TaxPeriod = 1
 
         (* Возможные состояния события *)
         [<FlagsAttribute>]
@@ -18,6 +18,9 @@ module Calendar =
             | Completed = 3
 
         (* Конкретное событие *)
+        [<CLIMutableAttribute>]
+        [<StructuralEquality>]
+        [<StructuralComparison>]
         type T =
             { Id         : int64
               FirmId     : int64

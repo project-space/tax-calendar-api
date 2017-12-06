@@ -36,24 +36,6 @@ module Tax =
           IntroductionYear : int16
           CancellationYear : int16 }
 
-    (* Возможные типы налогового периода *)
-    [<FlagsAttribute>]
-    type PeriodType =
-        | Annual    = 0
-        | Quarterly = 1
-        | Monthly   = 2
-
-    (* Период, за который оплачивается налог *)
-    type Period =
-        { Id      : int64
-          TaxId   : Id
-          Type    : PeriodType
-          Year    : int16
-          Quarter : byte
-          Month   : byte
-          Start   : DateTime
-          End     : DateTime }
-
     module Restriction =
 
         (* Тэги, указывающие на признаки, при наличии которых (хотя бы одного) уплачивается налог *)      
@@ -76,3 +58,29 @@ module Tax =
                 (Id.PersonalIncome, [
                     BusinessForm(BusinessFormType.IP)])            
             ] |> Map.ofList
+
+
+    (* Возможные типы налогового периода *)
+    [<FlagsAttribute>]
+    type PeriodType =
+        | Annual    = 0
+        | Quarterly = 1
+        | Monthly   = 2
+
+    (* Период, за который оплачивается налог *)
+    [<CLIMutableAttribute>]
+    type Period =
+        { Id      : int64
+          TaxId   : Id
+          Type    : PeriodType
+          Year    : int16
+          Quarter : byte
+          Month   : byte
+          Start   : DateTime
+          End     : DateTime }
+        with
+            member __.Restrictions 
+                with get () = 
+                    Restriction.Values
+                    |> Map.tryFind __.TaxId
+                    |> Option.defaultValue []   

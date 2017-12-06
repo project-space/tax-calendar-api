@@ -31,3 +31,24 @@ module Queries =
                 ]
 
             ExecuteAsync script param
+
+    module Taxes =
+        module Periods =
+            let public GetAll() = 
+                let script = Core.ResourceManager.Get "DataAccess.Scripts.Tax_Period_GetAll.sql"
+                QueryAsync<Tax.Period> script null
+
+    module Events =
+        let public GetAllByFirmId (firmId: int64) =
+            let script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_GetAllByFirmId.sql"
+            let param = dict ["FirmId" => firmId ]
+            
+            QueryAsync<Calendar.Event.T> script param
+
+        let public Save (event: Calendar.Event.T) =
+            let script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_Save.sql"
+            ExecuteAsync script event
+
+        let public RemoveByIds (ids: int64 seq) =
+            let script = "DataAccess.Scripts.Calendar_Event_RemoveByIds.sql"
+            ExecuteAsync script ids        

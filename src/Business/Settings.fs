@@ -30,7 +30,5 @@ module Settings =
         let  changedSettings = { settings with Values = applyChanges settings.Values change }
         let! _               = Settings.Save changedSettings
 
-        Calendar.OnSettingsChanged changedSettings change
-        
-        ()
+        return! Calendar.OnSettingsChanged changedSettings        
     }
