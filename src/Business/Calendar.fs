@@ -1,10 +1,7 @@
 namespace Business
 
 open Design.Models.Calendar.Event
-open Design.Models.Calendar
 open Design.Models
-open DTO.Settings
-open Tax
 
 module Calendar =    
 
@@ -26,7 +23,7 @@ module Calendar =
         |> Seq.filter (fun (period, restrictions) -> Restrictions.filter setting.Values restrictions period)
         |> Seq.map (fun (period, _) -> toEvent setting.FirmId period)
 
-    let private updateEvents (setting: Setting.T) = async {
+    let public OnSettingsChanged (setting: Setting.T) = async {
         let! allTaxPeriods = DataAccess.Queries.Taxes.Periods.GetAll() 
         let! existingEvents = DataAccess.Queries.Events.GetAllByFirmId(setting.FirmId)
         let createdEvents = createEvents allTaxPeriods setting
@@ -47,8 +44,5 @@ module Calendar =
         |> System.Threading.Tasks.Task.WhenAll
         |> ignore
 
-        return difference
+        return difference 
     }
-
-    let public OnSettingsChanged (settings: Setting.T) =
-        updateEvents settings
