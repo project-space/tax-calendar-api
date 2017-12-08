@@ -36,30 +36,6 @@ module Tax =
           IntroductionYear : int16
           CancellationYear : int16 }
 
-    module Restriction =
-
-        (* Тэги, указывающие на признаки, при наличии которых (хотя бы одного) уплачивается налог *)      
-        type Tag =
-            | BusinessForm of BusinessFormType
-            | TaxationSystem of TaxationSystemType
-            | HasInvoiceIncludingVAT
-
-        let public Values = 
-            [
-                (Id.VAT, [
-                    TaxationSystem(TaxationSystemType.OSNO)
-                    HasInvoiceIncludingVAT
-                ])
-
-                (Id.PersonalProperty, [
-                    BusinessForm(BusinessFormType.IP)
-                ])
-
-                (Id.PersonalIncome, [
-                    BusinessForm(BusinessFormType.IP)])            
-            ] |> Map.ofList
-
-
     (* Возможные типы налогового периода *)
     [<FlagsAttribute>]
     type PeriodType =
@@ -78,9 +54,3 @@ module Tax =
           Month   : byte
           Start   : DateTime
           End     : DateTime }
-        with
-            member __.Restrictions 
-                with get () = 
-                    Restriction.Values
-                    |> Map.tryFind __.TaxId
-                    |> Option.defaultValue []   

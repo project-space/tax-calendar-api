@@ -5,7 +5,6 @@ open Design.Models.Calendar
 open Design.Models
 open DTO.Settings
 open Tax
-open Tax.Restriction
 
 module Calendar =    
 
@@ -23,7 +22,7 @@ module Calendar =
 
     let private createEvents (taxPeriods: Tax.Period seq) (setting: Setting.T) =
         taxPeriods
-        |> Seq.map (fun period -> (period, period.Restrictions))
+        |> Seq.map (fun period -> (period, Restrictions.get period.TaxId |> Option.defaultValue []))
         |> Seq.filter (fun (period, restrictions) -> Restrictions.filter setting.Values restrictions period)
         |> Seq.map (fun (period, _) -> toEvent setting.FirmId period)
 
