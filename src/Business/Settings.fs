@@ -6,7 +6,7 @@ module Settings =
     open DTO.Settings
     open Shared.Primitives
     
-    let private applyChanges values change =
+    let private applyChanges change values =
         match change with
         | Register (businessForm, taxationSystem) -> 
             { values with
@@ -27,8 +27,8 @@ module Settings =
  
     let public ChangeSettings (firmId: int64) (change: ChangeRequest) = async {
         let! settings        = Settings.Get firmId
-        let  changedSettings = { settings with Values = applyChanges settings.Values change }
+        let  changedSettings = { settings with Values = applyChanges change settings.Values }
         let! _               = Settings.Save changedSettings
 
-        return! Calendar.OnSettingsChanged changedSettings        
+        return! Calendar.OnSettingsChanged changedSettings      
     }

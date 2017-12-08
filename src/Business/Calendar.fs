@@ -21,23 +21,11 @@ module Calendar =
 
         template          
 
-    let private byRestrictionFilter (settings: Setting.Values) (period: Tax.Period) =
-        period.Restrictions
-        |> List.exists (function
-            | BusinessForm (value) -> settings.BusinessFormType = value
-            | TaxationSystem (value) -> 
-                settings.TaxationSystemTypes
-                |> Seq.sortBy (fun (_, year) -> year)
-                |> Seq.tryFindBack (fun (_, year) -> year <= period.Year)
-                |> Option.map (fun (ts, _) -> value = ts)
-                |> Option.defaultValue false
-            | HasInvoiceIncludingVAT -> false
-            | _ -> true )      
-
     let private createEvents (taxPeriods: Tax.Period seq) (setting: Setting.T) =
         taxPeriods
-        |> Seq.filter (byRestrictionFilter setting.Values)
-        |> Seq.map (toEvent setting.FirmId)
+        |> Seq.map (fun period -> (period, period.Restrictions))
+        |> Seq.filter (fun (period, restrictions) -> Restrictions.filter setting.Values restrictions period)
+        |> Seq.map (fun (period, _) -> toEvent setting.FirmId period)
 
     let private updateEvents (setting: Setting.T) = async {
         let! allTaxPeriods = DataAccess.Queries.Taxes.Periods.GetAll() 
@@ -56,9 +44,8 @@ module Calendar =
             |> Seq.distinctBy (fun e -> e.EntityId, e.EntityType, e.Start, e.End)
 
         difference
-        |> Seq.map (DataAccess.Queries.Events.Save)
-        |> Async.Parallel
-        |> Async.RunSynchronously
+        |> Seq.map (DataAccess.Queries.Events.Save >> Async.StartAsTask)
+        |> System.Threading.Tasks.Task.WhenAll
         |> ignore
 
         return difference
