@@ -1,6 +1,7 @@
 ﻿module Business.Tests
+
 open Expecto
 
 [<EntryPoint>]
 let main argv =
-    Tests.runTestsInAssembly defaultConfig argv
+    runTestsInAssembly defaultConfig argv

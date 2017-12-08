@@ -20,3 +20,7 @@ module Setting =
   type T = 
       { FirmId : int64
         Values : Values }
+      with
+        static member Default = 
+          { FirmId = 0L 
+            Values = Values.Default }      
