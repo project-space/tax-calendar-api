@@ -1,16 +1,19 @@
 namespace DataAccess
 
 open Core.Query
+open Core.TVP
 open Design.Models
 open Newtonsoft.Json
 
 module Queries =
     module Settings =
-        let public Get (firmId: int64) = async {
-            let script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Get.sql"
-            let param = dict [ "FirmId" => firmId ]
+        let Get (firmId: int64) = async {
+            let options = {
+                Options.Default with
+                 Script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Get.sql"
+                 Parameters = dict [ "FirmId" => firmId ] }
 
-            let! serializedValues = QuerySingleAsync script param
+            let! serializedValues = querySingleAsync options
             let desirealizedValue = 
                 if isNull serializedValues 
                     then Setting.Values.Default
@@ -21,34 +24,43 @@ module Queries =
                   Setting.T.Values = desirealizedValue }
         }
         
-        let public Save (setting: Setting.T) = 
+        let Save (setting: Setting.T) = 
             let serializedValues = JsonConvert.SerializeObject(setting.Values)
-            let script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Save.sql"
-            let param = 
-                dict [
-                    "FirmId" => setting.FirmId
-                    "Values" => serializedValues
-                ]
+            let options = { 
+                Options.Default with
+                 Script = Core.ResourceManager.Get "DataAccess.Scripts.Settings_Save.sql" 
+                 Parameters = 
+                    dict [
+                        "FirmId" => setting.FirmId
+                        "Values" => serializedValues]} 
 
-            ExecuteAsync script param
+            executeAsync options
 
     module Taxes =
         module Periods =
-            let public GetAll() = 
-                let script = Core.ResourceManager.Get "DataAccess.Scripts.Tax_Period_GetAll.sql"
-                QueryAsync<Tax.Period> script null
+            let GetAll() = 
+                queryAsync<Tax.Period> { Options.Default with Script = Core.ResourceManager.Get "DataAccess.Scripts.Tax_Period_GetAll.sql" }
+
+            let GetAllByIds (ids : int64 seq) =
+                queryAsync<Tax.Period> 
+                    { Options.Default with 
+                       Script = Core.ResourceManager.Get "DataAccess.Scripts.Tax_Period_GetAllByIds.sql"
+                       TVP = Some (create "periodId" ids) }
 
     module Events =
-        let public GetAllByFirmId (firmId: int64) =
-            let script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_GetAllByFirmId.sql"
-            let param = dict ["FirmId" => firmId ]
-            
-            QueryAsync<Calendar.Event.T> script param
+        let GetAllByFirmId (firmId: int64) =
+            queryAsync<Calendar.Event.T> 
+                { Options.Default with 
+                   Script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_GetAllByFirmId.sql" 
+                   Parameters = dict ["FirmId" => firmId ]}
 
-        let public Save (event: Calendar.Event.T) =
-            let script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_Save.sql"
-            ExecuteAsync script event
+        let Save (event: Calendar.Event.T) =
+            executeAsync 
+                { Options.Default with 
+                   Script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_Save.sql" }
 
-        let public RemoveByIds (ids: int64 seq) =
-            let script = "DataAccess.Scripts.Calendar_Event_RemoveByIds.sql"
-            ExecuteAsync script ids        
+        let RemoveByIds (ids: int64 seq) =
+            executeAsync 
+                { Options.Default with 
+                   Script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_RemoveByIds.sql"
+                   TVP = Some (create "periodId" ids) }

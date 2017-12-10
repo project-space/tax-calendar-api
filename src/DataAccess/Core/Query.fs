@@ -1,31 +1,55 @@
 namespace DataAccess.Core
 
-open Connection
-open Dapper
-
 module Query =
-    let inline (=>) key value = key, box value
+    open Connection
+    open Dapper
+    open System.Collections.Generic
 
-    let public QueryAsync<'T> (query: string) (param: obj) = async {
+    type Options =
+        { Script     : string 
+          Parameters : IDictionary<string, obj>
+          TVP        : TVP.T option }
+        with
+            static member Default = 
+                { Script = string()
+                  Parameters = null
+                  TVP = None }
+
+    (* -------------------------------------------------------------- *)
+    // HELPERS
+    (* -------------------------------------------------------------- *)
+    let inline (=>) key value = key, box value    
+    let inline private await task = task |> Async.AwaitTask
+         
+    (* -------------------------------------------------------------- *)
+    // QUERIES  
+    (* -------------------------------------------------------------- *)
+    let queryAsync<'T> options = async {
         use connection = getConnection()
 
-        return! 
-            connection.QueryAsync<'T>(query, param)
-            |> Async.AwaitTask<'T seq>
+        do! TVP.apply connection options.TVP
+        let! rows = await (connection.QueryAsync<'T>(options.Script, options.Parameters))
+        do! TVP.release connection options.TVP
+
+        return rows        
     }
 
-    let public QuerySingleAsync<'T> (query:string) (param: obj) = async {
+    let querySingleAsync<'T> options = async {
         use connection = getConnection()
 
-        return! 
-            connection.QuerySingleOrDefaultAsync(query, param)
-            |> Async.AwaitTask<'T>
+        do! TVP.apply connection options.TVP
+        let! rows = await (connection.QuerySingleOrDefaultAsync<'T>(options.Script, options.Parameters))
+        do! TVP.release connection options.TVP
+
+        return rows
     }
 
-    let public ExecuteAsync (query: string) (param: obj) = async {
+    let executeAsync options = async {
         use connection = getConnection()
 
-        return! 
-            connection.ExecuteAsync(query, param)
-            |> Async.AwaitTask
+        do! TVP.apply connection options.TVP
+        let! affectedRows = await (connection.ExecuteAsync(options.Script, options.Parameters))
+        do! TVP.release connection options.TVP
+
+        return affectedRows
     }
