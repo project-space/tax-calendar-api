@@ -15,7 +15,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TaxPeriodCreatorTests.fs" />
     <Compile Include="RestrictionFilter.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
