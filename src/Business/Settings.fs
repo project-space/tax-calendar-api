@@ -25,10 +25,10 @@ module Settings =
 
             { values with TaxationSystemTypes = taxationSystemTypes }
  
-    let public ChangeSettings (firmId: int64) (change: ChangeRequest) = async {
+    let change (firmId: int64) (req: ChangeRequest) = async {
         let! settings        = Settings.Get firmId
-        let  changedSettings = { settings with Values = applyChanges change settings.Values }
+        let  changedSettings = { settings with Values = applyChanges req settings.Values }
         let! _               = Settings.Save changedSettings
 
-        return! Calendar.OnSettingsChanged changedSettings      
+        return! Calendar.rebuild changedSettings      
     }

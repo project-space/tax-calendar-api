@@ -2,47 +2,57 @@ namespace Business
 
 open Design.Models.Calendar.Event
 open Design.Models
+open Mappers.Tax.Period
 
 module Calendar =    
 
-    let private toEvent (firmId: int64) (period: Tax.Period) =
-        let template = 
-            { Id         = 0L
-              FirmId     = firmId
-              State      = State.Default
-              Start      = period.Start
-              End        = period.End
-              EntityId   = period.Id
-              EntityType = EntityType.TaxPeriod }
+    let private ``rebuild events`` (setting : Setting.T) = async {
+        let getRestrictions (period: Tax.Period) = (period, Restrictions.get period.TaxId |> Option.defaultValue [])
+        let restrictionsFilter (period: Tax.Period, restrictions) = Restrictions.filter setting.Values restrictions period
 
-        template          
+        let! taxPeriods = DataAccess.Queries.Taxes.Periods.GetAll() 
+        return
+            taxPeriods
+            |> Seq.map getRestrictions
+            |> Seq.filter restrictionsFilter
+            |> Seq.map (fun (period, _) -> period, ``to event`` setting.FirmId period)
+    }
 
-    let private createEvents (taxPeriods: Tax.Period seq) (setting: Setting.T) =
-        taxPeriods
-        |> Seq.map (fun period -> (period, Restrictions.get period.TaxId |> Option.defaultValue []))
-        |> Seq.filter (fun (period, restrictions) -> Restrictions.filter setting.Values restrictions period)
-        |> Seq.map (fun (period, _) -> toEvent setting.FirmId period)
+    let private ``get existing events`` (firmId : int64) = async {
+        let! ``existing events`` = DataAccess.Queries.Events.GetAllByFirmId firmId
+        let periodIds = 
+            ``existing events``
+            |> Seq.filter (fun event -> event.EntityType = EntityType.TaxPeriod)
+            |> Seq.map (fun event -> event.EntityId)
 
-    let public OnSettingsChanged (setting: Setting.T) = async {
-        let! allTaxPeriods = DataAccess.Queries.Taxes.Periods.GetAll() 
-        let! existingEvents = DataAccess.Queries.Events.GetAllByFirmId(setting.FirmId)
-        let createdEvents = createEvents allTaxPeriods setting
+        let! periods = DataAccess.Queries.Taxes.Periods.GetAllByIds periodIds
 
-        let! _ = 
-            existingEvents
-            |> Seq.filter (fun e -> e.State <> State.Completed)
-            |> Seq.map (fun e -> e.Id)
-            |> DataAccess.Queries.Events.RemoveByIds
+        return ``existing events``
+        |> Seq.filter (fun event -> event.EntityType = EntityType.TaxPeriod)
+        |> Seq.map (fun event -> periods |> Seq.find (fun period -> event.EntityId = period.Id), event)
+    }
 
-        let difference = 
-            [existingEvents; createdEvents] 
-            |> Seq.concat
-            |> Seq.distinctBy (fun e -> e.EntityId, e.EntityType, e.Start, e.End)
+    let private ``merge events``
+        (``built events``    : (Tax.Period * Calendar.Event.T) seq)
+        (``existing events`` : (Tax.Period * Calendar.Event.T) seq) =
 
-        difference
-        |> Seq.map (DataAccess.Queries.Events.Save >> Async.StartAsTask)
-        |> System.Threading.Tasks.Task.WhenAll
-        |> ignore
+        let ``events to be removed`` =
+            ``existing events``  |> Seq.filter (fun (eEventPeriod, _) ->
+                ``built events`` |> Seq.exists (fun (bEventPeriod, _) -> eEventPeriod = bEventPeriod) |> not)
+                                 |> Seq.filter (fun (_, eEvent) -> eEvent.State <> State.Completed)
+                                 |> Seq.map    (fun (_, eEvent) -> eEvent.Id)
 
-        return difference 
+        let ``events to be added`` =
+            ``built events``        |> Seq.filter (fun (bEventPeriod, _) ->
+                ``existing events`` |> Seq.exists (fun (eEventPeriod, _) -> eEventPeriod = bEventPeriod) |> not)
+                                    |> Seq.map    (fun (_, bEvent) -> bEvent)
+
+        (``events to be removed``, ``events to be added``)
+
+    let rebuild (setting: Setting.T) = async {
+        let! ``built events``    = ``rebuild events`` setting
+        let! ``existing events`` = ``get existing events`` setting.FirmId
+        let  (toRemove, toAdd)   = ``merge events`` ``built events`` ``existing events``
+
+        return (toRemove, toAdd)
     }

@@ -10,7 +10,7 @@ module Firms =
     let public ChangeSettings (firmId: int) =
         fun (next: HttpFunc) (context: HttpContext) -> task {
             let! request = context.BindJsonAsync<ChangeRequest>()
-            let! result  = Business.Settings.ChangeSettings (int64 firmId) request
+            let! result  = Business.Settings.change (int64 firmId) request
 
             return! json result next context
         }

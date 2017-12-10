@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Restrictions.fs" />
+    <Compile Include="Mappers.fs" />    
     <Compile Include="TaxPeriod.fs" />
     <Compile Include="Calendar.fs" />
     <Compile Include="Settings.fs" />
