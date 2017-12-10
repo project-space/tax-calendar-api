@@ -16,6 +16,7 @@
     <Compile Include="Queries.fs" />
     <EmbeddedResource Include="Scripts/Calendar_Event_GetAllByFirmId.sql" />
     <EmbeddedResource Include="Scripts/Calendar_Event_Save.sql" />
+    <EmbeddedResource Include="Scripts/Tax_Period_GetAllByIds.sql" />
     <EmbeddedResource Include="Scripts/Tax_Period_GetAll.sql" />
     <EmbeddedResource Include="Scripts/Settings_Save.sql" />
     <EmbeddedResource Include="Scripts/Settings_Get.sql" />

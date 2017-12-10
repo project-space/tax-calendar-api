@@ -16,14 +16,18 @@ module TVP =
 
     (* move to another place *)
     let private propIsOption (prop: PropertyInfo) =
-        let genericTypeDefinition = prop.PropertyType.GetGenericTypeDefinition()
+        let genericTypeDefinition = 
+            match prop.PropertyType.IsGenericType with
+            | true -> Some (prop.PropertyType.GetGenericTypeDefinition())
+            | false -> None
+            
         let isOption = 
             prop.PropertyType.IsGenericType &&
-            genericTypeDefinition = typedefof<option<_>>
+            genericTypeDefinition.Value = typedefof<option<_>>
 
         let underlyingType = 
             match isOption with 
-            | true  -> genericTypeDefinition.GenericTypeArguments |> Array.tryLast
+            | true  -> genericTypeDefinition.Value.GenericTypeArguments |> Array.tryLast
             | false -> None
 
         underlyingType
@@ -81,14 +85,12 @@ module TVP =
 
         table.Columns.AddRange (columns)
 
-        items |> Seq.map (fun item -> 
-            rowProps |> Array.map (fun prop -> 
-                let value = prop.GetValue(item)
-                match value with
-                | :? (option<_>) as opt -> opt.Value
-                | _ -> value) 
-            |> (fun row -> table.Rows.Add(row)))
-        |> ignore
+        let getPropValue item (prop : PropertyInfo) = 
+            prop.GetValue(item)
+
+        items |> Seq.iter (fun item ->
+            rowProps |> Array.map (getPropValue item) 
+                     |> (fun row -> table.Rows.Add(row)) |> ignore)
 
         table
 
@@ -96,7 +98,7 @@ module TVP =
         name
         (items : 'TRow seq) =
 
-        let rowType = typedefof<'TRow>
+        let rowType = typeof<'TRow>
         let rowProps = rowType.GetProperties()
 
         { Name = name 
@@ -110,7 +112,7 @@ module TVP =
             if tvp.IsSome then
                 connection.Open()
                 let! _ = connection.ExecuteAsync (tvp.Value.CreateScript) |> Async.AwaitTask
-                use bulkCopy = new SqlBulkCopy(connection.ConnectionString)
+                use bulkCopy = new SqlBulkCopy((connection :?> SqlConnection))
                 bulkCopy.DestinationTableName <- (sprintf "#%s" tvp.Value.Name)
                 do! bulkCopy.WriteToServerAsync (tvp.Value.Data) |> Async.AwaitTask      
         }

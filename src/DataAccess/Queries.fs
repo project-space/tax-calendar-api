@@ -6,6 +6,13 @@ open Design.Models
 open Newtonsoft.Json
 
 module Queries =
+    
+    type Identificators =
+        { Value : int64 }
+        with
+            static member Create identificators =
+                identificators |> Seq.map (fun id -> { Value = id })
+
     module Settings =
         let Get (firmId: int64) = async {
             let options = {
@@ -45,7 +52,7 @@ module Queries =
                 queryAsync<Tax.Period> 
                     { Options.Default with 
                        Script = Core.ResourceManager.Get "DataAccess.Scripts.Tax_Period_GetAllByIds.sql"
-                       TVP = Some (create "periodId" ids) }
+                       TVP = Some (create "Identificators" (Identificators.Create ids)) }
 
     module Events =
         let GetAllByFirmId (firmId: int64) =
@@ -57,10 +64,20 @@ module Queries =
         let Save (event: Calendar.Event.T) =
             executeAsync 
                 { Options.Default with 
-                   Script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_Save.sql" }
+                   Script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_Save.sql"
+                   Parameters = 
+                    dict [
+                        "Id" => event.Id
+                        "FirmId" => event.FirmId
+                        "EntityId" => event.EntityId
+                        "EntityType" => event.EntityType
+                        "State" => event.State
+                        "Start" => event.Start
+                        "End" => event.End
+                    ] }
 
         let RemoveByIds (ids: int64 seq) =
             executeAsync 
                 { Options.Default with 
                    Script = Core.ResourceManager.Get "DataAccess.Scripts.Calendar_Event_RemoveByIds.sql"
-                   TVP = Some (create "periodId" ids) }
+                   TVP = Some (create "Identificators" (Identificators.Create ids)) }
