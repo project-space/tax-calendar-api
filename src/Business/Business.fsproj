@@ -6,14 +6,8 @@
     <ProjectReference Include="..\Design\Design.fsproj">
       <Name>Design.fsproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DTO\DTO.fsproj">
-      <Name>DTO.fsproj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DataAccess\DataAccess.fsproj">
       <Name>DataAccess.fsproj</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Shared\Shared.fsproj">
-      <Name>Shared.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -22,5 +16,8 @@
     <Compile Include="TaxPeriod.fs" />
     <Compile Include="Calendar.fs" />
     <Compile Include="Settings.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core.Fluent-4.0" Version="1.0.0.5" />
   </ItemGroup>
 </Project>

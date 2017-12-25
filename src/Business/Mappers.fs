@@ -4,14 +4,16 @@ open Design.Models
 open Calendar.Event
 
 module Mappers =
+
     module Tax =
+
         module Period =
 
-            let ``to event`` 
-                (firmId : int64) 
+            let toEvent 
+                (firmId : int) 
                 (period : Tax.Period) =
 
-                { Id         = 0L
+                { Id         = 0
                   FirmId     = firmId
                   State      = State.Default
                   Start      = period.Start

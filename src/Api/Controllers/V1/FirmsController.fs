@@ -1,7 +1,7 @@
 namespace Api.Controllers
 
 module Firms =
-    open DTO.Settings
+    open Design.Models.Setting
     open Giraffe.HttpHandlers
     open Giraffe.HttpContextExtensions
     open Giraffe.Tasks
@@ -10,7 +10,7 @@ module Firms =
     let public ChangeSettings (firmId: int) =
         fun (next: HttpFunc) (context: HttpContext) -> task {
             let! request = context.BindJsonAsync<ChangeRequest>()
-            let! result  = Business.Settings.change (int64 firmId) request
+            let! result  = Business.Settings.change firmId request
 
             return! json result next context
         }

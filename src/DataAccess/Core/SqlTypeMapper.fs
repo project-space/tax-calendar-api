@@ -15,7 +15,7 @@ module SqlTypeMapper =
             (typeof<float>, "real")
             (typeof<int>, "int")
             (typeof<int16>, "short")
-            (typeof<int64>, "bigint")
+            (typeof<int>, "bigint")
             (typeof<string>, "varchar(max)")
             (typeof<TimeSpan>, "time")
         ]

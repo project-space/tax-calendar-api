@@ -3,11 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.fsproj">
-      <Name>Shared.fsproj</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Enums.fs" />
     <Compile Include="Models/Calendar.fs" />
     <Compile Include="Models/Tax.fs" />
     <Compile Include="Models/Settings.fs" />

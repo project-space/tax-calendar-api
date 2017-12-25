@@ -1,7 +1,8 @@
-namespace Shared
+namespace Design
+
+open System
 
 module Enums =
-    open System
 
     [<Flags>]
     type TaxationSystemType =

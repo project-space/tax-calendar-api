@@ -1,31 +1,31 @@
 namespace Business
 
+open FSharp.Core.Fluent
+
 module Settings =
     open DataAccess.Queries
     open Design.Models.Setting
-    open DTO.Settings
-    open Shared.Primitives
+    open Design.Enums
     
     let private applyChanges change values =
         match change with
         | Register (businessForm, taxationSystem) -> 
             { values with
                 BusinessFormType = businessForm;
-                TaxationSystemTypes = Seq.append values.TaxationSystemTypes [(taxationSystem, Year())]}
+                TaxationSystemTypes = values.TaxationSystemTypes.append [(taxationSystem, 0)]}
 
         | ChangeRegistrationDate (registrationDate) -> 
-            { values with RegistrationDate = registrationDate }
+            { values with 
+                RegistrationDate = registrationDate }
 
         | ChangeTaxationSystem (year, taxationSystem) -> 
-            let taxationSystemTypes =
-                values.TaxationSystemTypes
-                |> Seq.filter (snd >> (fun existingYear -> existingYear <> year ))
-                |> Seq.append [(taxationSystem, year)]
-                |> Seq.sortBy (snd)
-
-            { values with TaxationSystemTypes = taxationSystemTypes }
+            { values with 
+                TaxationSystemTypes = values.TaxationSystemTypes
+                                            .filter(fun (_, _year) -> _year <> year)
+                                            .append([(taxationSystem, year)])
+                                            .sortBy(fun (_, _year) -> _year) }
  
-    let change (firmId: int64) (req: ChangeRequest) = async {
+    let change (firmId: int) (req: ChangeRequest) = async {
         let! settings        = Settings.Get firmId
         let  changedSettings = { settings with Values = applyChanges req settings.Values }
         let! _               = Settings.Save changedSettings

@@ -7,17 +7,11 @@
     <ProjectReference Include="..\Design\Design.fsproj">
       <Name>Design.fsproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DTO\DTO.fsproj">
-      <Name>DTO.fsproj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DataAccess\DataAccess.fsproj">
       <Name>DataAccess.fsproj</Name>
     </ProjectReference>
     <ProjectReference Include="..\Business\Business.fsproj">
       <Name>Business.fsproj</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Shared\Shared.fsproj">
-      <Name>Shared.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

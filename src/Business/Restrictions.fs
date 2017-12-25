@@ -1,42 +1,39 @@
 namespace Business
-    module Restrictions = 
-        open Design.Models
-        open Shared.Enums
 
-        (* Тэги, указывающие на признаки (aka Restrictions), при наличии которых (хотя бы одного) уплачивается налог *)      
-        type Tag =
-            | BusinessForm of BusinessFormType
-            | TaxationSystem of TaxationSystemType
-            | HasInvoiceIncludingVAT
+open FSharp.Core.Fluent
 
-        let private taxRestrictions = 
-            [(Tax.Id.VAT, [
-                TaxationSystem(TaxationSystemType.OSNO)
-                HasInvoiceIncludingVAT])
+open Design.Enums
+open Design.Models
 
-             (Tax.Id.PersonalProperty, [
-                BusinessForm(BusinessFormType.IP)])
+module Restrictions = 
 
-             (Tax.Id.PersonalIncome, [
-                BusinessForm(BusinessFormType.IP)])
+    (* Тэги, указывающие на признаки (aka Restrictions), при наличии которых (хотя бы одного) уплачивается налог *)      
+    type Tag =
+        | BusinessForm of BusinessFormType
+        | TaxationSystem of TaxationSystemType
+        | HasInvoiceIncludingVAT
 
-            ] |> Map.ofList
+    let private taxRestrictions = 
+        Map.ofList <|
+        [(Tax.Id.VAT,              [HasInvoiceIncludingVAT; TaxationSystem(TaxationSystemType.OSNO)])
+         (Tax.Id.PersonalProperty, [BusinessForm(BusinessFormType.IP)])
+         (Tax.Id.PersonalIncome,   [BusinessForm(BusinessFormType.IP)])]
 
-        let get (taxId: Tax.Id) = taxRestrictions |> Map.tryFind taxId
+    let get (taxId: Tax.Id) = taxRestrictions |> Map.tryFind taxId
 
-        let filter 
-            (settings     : Setting.Values)
-            (restrictions : Tag list) 
-            (period       : Tax.Period) =           
+    let filter 
+        (settings     : Setting.Values)
+        (restrictions : Tag list) 
+        (period       : Tax.Period) =           
 
-            List.exists (
-                function
-                | BusinessForm (value) -> settings.BusinessFormType = value
-                | TaxationSystem (value) -> 
-                    settings.TaxationSystemTypes
-                    |> Seq.sortBy (fun (_, year) -> year)
-                    |> Seq.tryFindBack (fun (_, year) -> year <= period.Year)
-                    |> Option.map (fun (ts, _) -> value = ts)
-                    |> Option.defaultValue false
-                | HasInvoiceIncludingVAT -> false
-            ) restrictions
+        List.exists (
+            function
+            | BusinessForm (value) -> settings.BusinessFormType = value
+            | TaxationSystem (value) -> 
+                settings.TaxationSystemTypes
+                        .tryFindBack(fun (_, year) -> year <= period.Year)
+                        |> Option.map (fun (ts, _) -> value = ts)
+                        |> Option.defaultValue false
+
+            | HasInvoiceIncludingVAT -> false
+        ) restrictions

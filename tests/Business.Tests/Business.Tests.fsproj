@@ -4,9 +4,6 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Shared\Shared.fsproj">
-      <Name>Shared.fsproj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\Design\Design.fsproj">
       <Name>Design.fsproj</Name>
     </ProjectReference>

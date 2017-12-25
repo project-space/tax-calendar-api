@@ -2,7 +2,8 @@
 
 open System        
 
-module Calendar =    
+module Calendar =        
+
     module Event =
 
         (* Сущности являющиеся причиной события *)
@@ -22,10 +23,10 @@ module Calendar =
         [<StructuralEquality>]
         [<StructuralComparison>]
         type T =
-            { Id         : int64
-              FirmId     : int64
+            { Id         : int
+              FirmId     : int
               State      : State
               Start      : DateTime
               End        : DateTime
-              EntityId   : int64
+              EntityId   : int
               EntityType : EntityType }

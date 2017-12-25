@@ -1,8 +1,8 @@
 namespace Design.Models
 
+open System
+
 module Tax =
-    open System
-    open Shared.Primitives
 
     (* Уникальные идентификаторы налогов, используются в базе данных - значения не менять *)
     [<FlagsAttribute>]
@@ -33,8 +33,8 @@ module Tax =
         { Id               : Id
           Name             : string
           Fines            : string
-          IntroductionYear : Year
-          CancellationYear : int16 }
+          IntroductionYear : int
+          CancellationYear : int }
 
     (* Возможные типы налогового периода *)
     [<FlagsAttribute>]
@@ -46,21 +46,21 @@ module Tax =
     (* Период, за который оплачивается налог *)
     [<CLIMutableAttribute>]
     type Period =
-        { Id      : int64
+        { Id      : int
           TaxId   : Id
           Type    : PeriodType
-          Year    : int16
-          Quarter : Quarter
-          Month   : Month
+          Year    : int
+          Quarter : int
+          Month   : int
           Start   : DateTime
           End     : DateTime }
         with
             static member Default =
-                { Id = 0L
+                { Id = 0
                   TaxId = Id.VAT
                   Type = PeriodType.Monthly
-                  Year = 0s
-                  Quarter = byte (0)
-                  Month = byte(0)
+                  Year = 0
+                  Quarter = 0
+                  Month = 0
                   Start = DateTime.Now
                   End = DateTime.Now }              

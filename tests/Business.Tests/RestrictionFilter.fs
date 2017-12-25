@@ -2,8 +2,8 @@ module RestrictionFilterTest
 
 open Business.Restrictions
 open Design.Models
+open Design.Enums
 open Expecto
-open Shared.Enums
 
 [<Tests>]
 let tests = 
@@ -25,11 +25,11 @@ let tests =
                 let settingValues = 
                     { Setting.Values.Default with 
                         TaxationSystemTypes = 
-                            [(TaxationSystemType.OSNO, 2010s)
-                             (TaxationSystemType.ENVD, 2018s)] }
+                            [(TaxationSystemType.OSNO, 2010)
+                             (TaxationSystemType.ENVD, 2018)] }
 
                 let restrictions = [TaxationSystem (TaxationSystemType.OSNO)]
-                let period = { Tax.Period.Default with Year = 2015s }
+                let period = { Tax.Period.Default with Year = 2015 }
 
                 let filterResult = filter settingValues restrictions period
 
